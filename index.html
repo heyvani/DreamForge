@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DreamForge — Your Inner Universe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --void: #05050f;
+  --deep: #0c0b1e;
+  --surface: #12112a;
+  --layer: #1a1836;
+  --card: #1e1c3a;
+  --border: rgba(180,160,255,0.10);
+  --border2: rgba(180,160,255,0.22);
+  --text: #ede8ff;
+  --muted: #7b77a0;
+  --faint: #3d3a60;
+  --gold: #e8c97e;
+  --gold2: #f5dfa0;
+  --lilac: #b49fff;
+  --lilac2: #d0c0ff;
+  --rose: #e896b8;
+  --teal: #6fe4c8;
+  --ink: #8b87c0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Star canvas ── */
+#stars-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Layout ── */
+.shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+}
+
+/* ── Nav ── */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.8rem 0 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  color: var(--gold2);
+}
+.brand-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav-pills {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 4px;
+}
+.pill {
+  padding: 6px 18px;
+  border-radius: 30px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.pill:hover { color: var(--text); }
+.pill.active {
+  background: var(--layer);
+  color: var(--lilac2);
+  border: 1px solid var(--border2);
+}
+
+.dream-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.count-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--lilac);
+  animation: twinkle 3s infinite;
+}
+@keyframes twinkle {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.3; transform:scale(0.7); }
+}
+
+/* ── Pages ── */
+.page { display: none; animation: fadeUp 0.4s ease; }
+.page.active { display: block; }
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ══════════════════════════
+   JOURNAL PAGE
+══════════════════════════ */
+.journal-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+/* Dream entry form */
+.entry-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.date-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  background: rgba(232,201,126,0.08);
+  border: 1px solid rgba(232,201,126,0.2);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.dream-title-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--text);
+  caret-color: var(--gold);
+  letter-spacing: 0.01em;
+}
+.dream-title-input::placeholder { color: var(--faint); }
+
+.divider-line { height: 1px; background: var(--border); }
+
+.dream-body-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+  caret-color: var(--gold);
+  line-height: 1.9;
+  resize: none;
+  min-height: 160px;
+}
+.dream-body-input::placeholder { color: var(--faint); font-style: italic; }
+
+/* Emotion picker */
+.emotion-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.emo-chip {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Space Grotesk', sans-serif;
+  transition: all 0.18s;
+}
+.emo-chip:hover { border-color: var(--border2); color: var(--text); }
+.emo-chip.sel {
+  background: var(--card);
+  color: var(--lilac2);
+  border-color: var(--lilac);
+}
+
+/* Vividness slider */
+.vivid-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.vivid-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.vivid-track {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 3px;
+  background: linear-gradient(to right, var(--lilac) 0%, var(--gold) 100%);
+  border-radius: 2px;
+  outline: none;
+}
+.vivid-track::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--gold2);
+  cursor: pointer;
+  border: 2px solid var(--void);
+}
+.vivid-val {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--gold);
+  min-width: 20px;
+}
+
+/* Submit */
+.forge-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #3b3270, #5a4a9e);
+  border: 1px solid rgba(180,160,255,0.3);
+  border-radius: 14px;
+  color: var(--lilac2);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.forge-btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+.forge-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* Right panel: analysis */
+.analysis-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.analysis-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+.analysis-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+/* Symbol cloud */
+.symbol-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 40px;
+}
+.symbol-tag {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1px solid;
+  transition: transform 0.2s;
+  cursor: default;
+}
+.symbol-tag:hover { transform: scale(1.05); }
+.sym-a { color: var(--gold); border-color: rgba(232,201,126,0.25); background: rgba(232,201,126,0.06); }
+.sym-b { color: var(--rose); border-color: rgba(232,150,184,0.25); background: rgba(232,150,184,0.06); }
+.sym-c { color: var(--teal); border-color: rgba(111,228,200,0.25); background: rgba(111,228,200,0.06); }
+.sym-d { color: var(--lilac); border-color: rgba(180,160,255,0.25); background: rgba(180,160,255,0.06); }
+
+/* Emotion arc */
+.emo-arc { display: flex; flex-direction: column; gap: 8px; }
+.emo-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.emo-bar-label { color: var(--muted); width: 70px; font-size: 11px; }
+.emo-bar-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.emo-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+.emo-pct { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); width:28px; text-align:right; }
+
+/* AI interpretation box */
+.interp-box {
+  background: linear-gradient(160deg, rgba(90,74,158,0.15), rgba(60,50,110,0.08));
+  border: 1px solid rgba(180,160,255,0.18);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.75;
+  color: var(--lilac2);
+  min-height: 60px;
+  position: relative;
+}
+.interp-box::after {
+  content: '✦';
+  position: absolute;
+  top: 10px; right: 12px;
+  font-size: 12px;
+  color: var(--gold);
+  font-style: normal;
+}
+
+.loading-dots {
+  display: flex; gap: 5px; align-items: center;
+  padding: 4px 0;
+}
+.ld { width:5px; height:5px; border-radius:50%; background:var(--lilac); animation:ldpulse 1.3s infinite; }
+.ld:nth-child(2){ animation-delay:.2s; }
+.ld:nth-child(3){ animation-delay:.4s; }
+@keyframes ldpulse { 0%,100%{opacity:.2;transform:scale(.8);} 50%{opacity:1;transform:scale(1.1);} }
+
+/* ══════════════════════════
+   ARCHIVE PAGE
+══════════════════════════ */
+.archive-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 2.5rem 0 1.5rem;
+}
+.archive-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--gold2);
+}
+.archive-meta { font-size:13px; color:var(--muted); }
+
+.dream-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.dream-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.dream-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--lilac), var(--gold));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.dream-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+.dream-card:hover::before { opacity: 1; }
+
+.dc-date { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); margin-bottom:8px; }
+.dc-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; color:var(--text); margin-bottom:8px; line-height:1.3; }
+.dc-excerpt { font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.dc-footer { display:flex; align-items:center; justify-content:space-between; }
+.dc-emotions { display:flex; gap:4px; flex-wrap:wrap; }
+.dc-emo { font-size:10px; padding:2px 8px; border-radius:10px; color:var(--lilac); border:1px solid rgba(180,160,255,0.2); background:rgba(180,160,255,0.05); }
+.dc-vivid {
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  color:var(--gold);
+  display:flex; align-items:center; gap:4px;
+}
+.vivid-dots { display:flex; gap:2px; }
+.vd { width:5px; height:5px; border-radius:50%; }
+.vd.on { background:var(--gold); }
+.vd.off { background:var(--faint); }
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+}
+.empty-icon { font-size:48px; margin-bottom:1rem; opacity:0.5; }
+.empty-text { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; color:var(--faint); }
+
+/* ══════════════════════════
+   PATTERNS PAGE
+══════════════════════════ */
+.patterns-layout { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+.patterns-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem;
+  text-align: center;
+}
+.stat-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-weight: 300;
+  color: var(--gold2);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 12px; color: var(--muted); }
+
+.patterns-mid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.pattern-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem;
+}
+
+/* Recurring symbols table */
+.sym-table { width:100%; border-collapse:collapse; margin-top:8px; }
+.sym-table tr { border-bottom:1px solid var(--border); }
+.sym-table tr:last-child { border-bottom:none; }
+.sym-table td { padding:8px 4px; font-size:13px; }
+.sym-table td:last-child { text-align:right; }
+.sym-bar-mini {
+  display:inline-block;
+  height:4px;
+  border-radius:2px;
+  vertical-align:middle;
+  margin-right:6px;
+  transition: width 1s ease;
+}
+
+/* Mood timeline */
+.mood-timeline { display:flex; align-items:flex-end; gap:6px; height:80px; margin-top:8px; }
+.mood-bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.mood-bar-fill { width:100%; border-radius:4px 4px 0 0; transition:height 0.8s ease; }
+.mood-bar-label { font-family:'Space Mono',monospace; font-size:8px; color:var(--muted); }
+
+/* AI pattern insight */
+.pattern-insight-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.75rem;
+}
+.pi-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.pi-icon { font-size: 20px; }
+.pi-title { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:300; color:var(--gold2); }
+.pi-body { font-family:'Cormorant Garamond',serif; font-size:16px; font-style:italic; line-height:1.8; color:var(--lilac2); }
+.pi-btn {
+  margin-top: 1rem;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--lilac);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pi-btn:hover { background:var(--layer); color:var(--lilac2); }
+
+/* Scroll container */
+.dc-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+
+/* ── Utilities ── */
+.mt-1 { margin-top:.5rem; }
+.placeholder-shimmer {
+  background: linear-gradient(90deg, var(--layer) 25%, var(--card) 50%, var(--layer) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+@keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 13px;
+  color: var(--lilac2);
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 999;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Responsive */
+@media(max-width:800px) {
+  .journal-grid { grid-template-columns:1fr; }
+  .patterns-top { grid-template-columns:1fr 1fr; }
+  .patterns-mid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+
+<div class="shell">
+  <!-- Nav -->
+  <nav>
+    <div class="brand">
+      <span class="brand-name">DreamForge</span>
+      <span class="brand-sub">inner universe</span>
+    </div>
+    <div class="nav-pills">
+      <button class="pill active" onclick="goto('journal', this)">Journal</button>
+      <button class="pill" onclick="goto('archive', this)">Archive</button>
+      <button class="pill" onclick="goto('patterns', this)">Patterns</button>
+    </div>
+    <div class="dream-count">
+      <div class="count-dot"></div>
+      <span id="dream-count-label">0 dreams logged</span>
+    </div>
+  </nav>
+
+  <!-- ═══════ JOURNAL PAGE ═══════ -->
+  <div class="page active" id="page-journal">
+    <div class="journal-grid">
+      <!-- Entry form -->
+      <div class="entry-panel">
+        <div class="entry-header">
+          <span class="section-label">✦ new entry</span>
+          <span class="date-badge" id="entry-date"></span>
+        </div>
+
+        <input class="dream-title-input" id="dream-title" type="text" placeholder="Give your dream a name…" maxlength="80">
+
+        <div class="divider-line"></div>
+
+        <textarea class="dream-body-input" id="dream-body" placeholder="Describe what you remember — colors, feelings, places, people, strange moments. Every detail matters…" rows="8"></textarea>
+
+        <div class="divider-line"></div>
+
+        <div>
+          <div class="section-label" style="margin-bottom:.6rem;">emotions present</div>
+          <div class="emotion-row" id="emo-picker">
+            <div class="emo-chip" onclick="toggleEmo(this)">joy</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">fear</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">wonder</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">sadness</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">confusion</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">love</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">anxiety</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">peace</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">anger</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">nostalgia</div>
+            <div class="emo-chip" onclick="toggleEmo(this)">euphoria</div>
+          </div>
+        </div>
+
+        <div class="vivid-row">
+          <span class="vivid-label">vividness</span>
+          <input type="range" class="vivid-track" id="vivid-slider" min="1" max="10" value="5" step="1" oninput="document.getElementById('vivid-num').textContent=this.value">
+          <span class="vivid-val" id="vivid-num">5</span>
+        </div>
+
+        <button class="forge-btn" id="forge-btn" onclick="forgeDream()">
+          ✦ Forge This Dream
+        </button>
+      </div>
+
+      <!-- Analysis panel -->
+      <div class="analysis-panel">
+        <div class="analysis-card">
+          <div class="analysis-title">✦ symbols detected</div>
+          <div class="symbol-cloud" id="symbol-cloud">
+            <span style="font-size:12px; color:var(--faint); font-style:italic;">Symbols will appear after forging…</span>
+          </div>
+        </div>
+
+        <div class="analysis-card">
+          <div class="analysis-title">emotional signature</div>
+          <div class="emo-arc" id="emo-arc">
+            <span style="font-size:12px; color:var(--faint); font-style:italic;">Emotional breakdown appears here…</span>
+          </div>
+        </div>
+
+        <div class="analysis-card">
+          <div class="analysis-title">✦ interpretation</div>
+          <div class="interp-box" id="interp-box">
+            <span style="color:var(--faint);">Your dream's hidden meaning will be revealed here after analysis.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ ARCHIVE PAGE ═══════ -->
+  <div class="page" id="page-archive">
+    <div class="archive-header">
+      <div class="archive-heading">Dream Archive</div>
+      <div class="archive-meta" id="archive-meta">All your logged dreams</div>
+    </div>
+    <div class="dc-scroll">
+      <div class="dream-cards" id="dream-cards">
+        <div class="empty-state">
+          <div class="empty-icon">🌙</div>
+          <div class="empty-text">No dreams forged yet.<br>Begin your first entry.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ PATTERNS PAGE ═══════ -->
+  <div class="page" id="page-patterns">
+    <div class="patterns-layout">
+      <div class="patterns-top">
+        <div class="stat-card">
+          <div class="stat-number" id="total-dreams">0</div>
+          <div class="stat-label">dreams logged</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="avg-vividness">—</div>
+          <div class="stat-label">avg vividness</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="top-emotion">—</div>
+          <div class="stat-label">dominant emotion</div>
+        </div>
+      </div>
+
+      <div class="patterns-mid">
+        <div class="pattern-panel">
+          <div class="analysis-title">recurring symbols</div>
+          <table class="sym-table" id="sym-table">
+            <tr><td colspan="2" style="color:var(--faint);font-size:12px;font-style:italic;">Log dreams to discover patterns…</td></tr>
+          </table>
+        </div>
+        <div class="pattern-panel">
+          <div class="analysis-title">emotional arc</div>
+          <div class="mood-timeline" id="mood-timeline">
+            <span style="font-size:12px;color:var(--faint);font-style:italic;">Log more dreams…</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pattern-insight-box">
+        <div class="pi-header">
+          <span class="pi-icon">🔮</span>
+          <span class="pi-title">Deep Pattern Reading</span>
+        </div>
+        <div class="pi-body" id="pattern-insight">Log at least 3 dreams and click the button below to receive a deep AI reading of your recurring themes, psychological patterns, and what your subconscious may be processing.</div>
+        <button class="pi-btn" onclick="getPatternReading()">✦ Generate Pattern Reading</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Star field ──
+const canvas = document.getElementById('stars-canvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 180; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.2 + 0.2,
+      alpha: Math.random(),
+      speed: Math.random() * 0.003 + 0.001,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function animStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const t = Date.now() / 1000;
+  stars.forEach(s => {
+    const a = 0.2 + 0.6 * (0.5 + 0.5 * Math.sin(t * s.speed * 6 + s.phase));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(210,200,255,${a})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(animStars);
+}
+
+resizeCanvas(); initStars(); animStars();
+window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
+
+// ── State ──
+let dreams = JSON.parse(localStorage.getItem('dreamforge_dreams') || '[]');
+
+// ── Date badge ──
+function setDate() {
+  const d = new Date();
+  document.getElementById('entry-date').textContent =
+    d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+}
+setDate();
+
+// ── Nav ──
+function goto(page, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  btn.classList.add('active');
+  if (page === 'archive') renderArchive();
+  if (page === 'patterns') renderPatterns();
+}
+
+// ── Emotion picker ──
+function toggleEmo(el) {
+  el.classList.toggle('sel');
+}
+
+// ── Forge dream ──
+async function forgeDream() {
+  const title = document.getElementById('dream-title').value.trim();
+  const body  = document.getElementById('dream-body').value.trim();
+  if (!title || body.length < 20) {
+    showToast('Give your dream a title and description first ✦');
+    return;
+  }
+
+  const emotions = [...document.querySelectorAll('.emo-chip.sel')].map(e => e.textContent);
+  const vividness = parseInt(document.getElementById('vivid-slider').value);
+  const btn = document.getElementById('forge-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Consulting the dream oracle…';
+
+  // Show loading states
+  document.getElementById('symbol-cloud').innerHTML = '<div class="loading-dots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>';
+  document.getElementById('emo-arc').innerHTML = '<div class="loading-dots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>';
+  document.getElementById('interp-box').innerHTML = '<div class="loading-dots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>';
+
+  const prompt = `You are a Jungian dream analyst with poetic insight. Analyze this dream entry and return ONLY valid JSON, nothing else.
+
+Dream title: "${title}"
+Dream content: "${body}"
+Emotions selected by dreamer: ${emotions.length ? emotions.join(', ') : 'none selected'}
+Vividness score: ${vividness}/10
+
+Return this exact JSON structure:
+{
+  "symbols": ["symbol1","symbol2","symbol3","symbol4","symbol5"],
+  "emotion_breakdown": [
+    {"name":"emotion_name","pct":30,"color":"#b49fff"},
+    {"name":"emotion_name","pct":25,"color":"#e896b8"},
+    {"name":"emotion_name","pct":20,"color":"#6fe4c8"},
+    {"name":"emotion_name","pct":15,"color":"#e8c97e"},
+    {"name":"emotion_name","pct":10,"color":"#8b87c0"}
+  ],
+  "interpretation": "2-3 poetic, insightful sentences about what this dream might mean psychologically and symbolically. Be mystical yet grounded. Reference specific elements from the dream.",
+  "archetype": "one Jungian archetype name this dream evokes (e.g. The Shadow, The Anima, The Trickster, The Hero)"
+}
+
+Rules: percentages must sum to 100. Symbols should be concrete nouns or short phrases from dream imagery. Be evocative. Use the dreamer's actual content.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const raw = data.content?.map(i => i.text || '').join('') || '{}';
+    let parsed;
+    try {
+      parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    } catch {
+      parsed = {
+        symbols: ['unknown realm', 'shifting light', 'hidden door', 'mirror self', 'distant voice'],
+        emotion_breakdown: [
+          {name:'mystery',pct:35,color:'#b49fff'},
+          {name:'tension',pct:25,color:'#e896b8'},
+          {name:'longing',pct:20,color:'#6fe4c8'},
+          {name:'wonder',pct:12,color:'#e8c97e'},
+          {name:'unease',pct:8,color:'#8b87c0'}
+        ],
+        interpretation: 'Your dream carries deep symbolic resonance. The imagery suggests your subconscious is processing unresolved feelings and searching for meaning in transition.',
+        archetype: 'The Wanderer'
+      };
+    }
+
+    // Render symbols
+    const colors = ['sym-a','sym-b','sym-c','sym-d'];
+    document.getElementById('symbol-cloud').innerHTML =
+      (parsed.symbols || []).map((s,i) =>
+        `<span class="symbol-tag ${colors[i%colors.length]}">${s}</span>`
+      ).join('');
+
+    // Render emotion arc
+    document.getElementById('emo-arc').innerHTML =
+      (parsed.emotion_breakdown || []).map(e => `
+        <div class="emo-bar-row">
+          <span class="emo-bar-label">${e.name}</span>
+          <div class="emo-bar-track">
+            <div class="emo-bar-fill" style="width:${e.pct}%;background:${e.color};"></div>
+          </div>
+          <span class="emo-pct">${e.pct}%</span>
+        </div>`).join('');
+
+    // Render interpretation
+    document.getElementById('interp-box').innerHTML =
+      `${parsed.interpretation || ''}<br><br><span style="font-family:'Space Mono',monospace;font-size:10px;font-style:normal;color:var(--gold);letter-spacing:.1em;">${(parsed.archetype||'').toUpperCase()}</span>`;
+
+    // Save dream
+    const dream = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      title, body, emotions, vividness,
+      symbols: parsed.symbols || [],
+      emotion_breakdown: parsed.emotion_breakdown || [],
+      interpretation: parsed.interpretation || '',
+      archetype: parsed.archetype || ''
+    };
+    dreams.unshift(dream);
+    localStorage.setItem('dreamforge_dreams', JSON.stringify(dreams));
+    updateDreamCount();
+    showToast('Dream forged ✦ ' + dream.title);
+
+    // Clear form
+    document.getElementById('dream-title').value = '';
+    document.getElementById('dream-body').value = '';
+    document.querySelectorAll('.emo-chip').forEach(e => e.classList.remove('sel'));
+    document.getElementById('vivid-slider').value = 5;
+    document.getElementById('vivid-num').textContent = '5';
+
+  } catch(err) {
+    document.getElementById('interp-box').innerHTML = `<span style="color:var(--rose);">Could not reach the dream oracle. Check your connection and try again.</span>`;
+    showToast('Connection failed — try again');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✦ Forge This Dream';
+}
+
+// ── Archive ──
+function renderArchive() {
+  const container = document.getElementById('dream-cards');
+  document.getElementById('archive-meta').textContent = `${dreams.length} dream${dreams.length !== 1 ? 's' : ''} in your archive`;
+
+  if (dreams.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🌙</div><div class="empty-text">No dreams forged yet.<br>Begin your first entry.</div></div>`;
+    return;
+  }
+
+  container.innerHTML = dreams.map(d => {
+    const date = new Date(d.date).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    const vividDots = Array(5).fill(0).map((_,i) => `<span class="vd ${i < Math.round(d.vividness/2) ? 'on' : 'off'}"></span>`).join('');
+    const emotionChips = (d.emotions || []).slice(0,3).map(e => `<span class="dc-emo">${e}</span>`).join('');
+    const excerpt = d.body.length > 100 ? d.body.slice(0,100) + '…' : d.body;
+    return `
+      <div class="dream-card" onclick="openDream(${d.id})">
+        <div class="dc-date">${date} · ${d.archetype || 'Dream'}</div>
+        <div class="dc-title">${d.title}</div>
+        <div class="dc-excerpt">${excerpt}</div>
+        <div class="dc-footer">
+          <div class="dc-emotions">${emotionChips}</div>
+          <div class="dc-vivid"><div class="vivid-dots">${vividDots}</div>${d.vividness}/10</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openDream(id) {
+  const d = dreams.find(x => x.id === id);
+  if (!d) return;
+  // Populate journal form with this dream's analysis
+  document.getElementById('dream-title').value = d.title;
+  document.getElementById('dream-body').value = d.body;
+  document.getElementById('vivid-slider').value = d.vividness;
+  document.getElementById('vivid-num').textContent = d.vividness;
+
+  // Show analysis
+  const colors = ['sym-a','sym-b','sym-c','sym-d'];
+  document.getElementById('symbol-cloud').innerHTML =
+    (d.symbols||[]).map((s,i) => `<span class="symbol-tag ${colors[i%colors.length]}">${s}</span>`).join('');
+  document.getElementById('emo-arc').innerHTML =
+    (d.emotion_breakdown||[]).map(e => `
+      <div class="emo-bar-row">
+        <span class="emo-bar-label">${e.name}</span>
+        <div class="emo-bar-track"><div class="emo-bar-fill" style="width:${e.pct}%;background:${e.color};"></div></div>
+        <span class="emo-pct">${e.pct}%</span>
+      </div>`).join('');
+  document.getElementById('interp-box').innerHTML =
+    `${d.interpretation}<br><br><span style="font-family:'Space Mono',monospace;font-size:10px;font-style:normal;color:var(--gold);letter-spacing:.1em;">${(d.archetype||'').toUpperCase()}</span>`;
+
+  goto('journal', document.querySelectorAll('.pill')[0]);
+}
+
+// ── Patterns ──
+function renderPatterns() {
+  document.getElementById('total-dreams').textContent = dreams.length;
+
+  if (dreams.length === 0) return;
+
+  // Avg vividness
+  const avgV = (dreams.reduce((a,d)=>a+d.vividness,0)/dreams.length).toFixed(1);
+  document.getElementById('avg-vividness').textContent = avgV;
+
+  // Top emotion
+  const emoCount = {};
+  dreams.forEach(d => (d.emotions||[]).forEach(e => emoCount[e]=(emoCount[e]||0)+1));
+  const topEmo = Object.entries(emoCount).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('top-emotion').textContent = topEmo ? topEmo[0] : '—';
+
+  // Symbol frequency
+  const symCount = {};
+  dreams.forEach(d => (d.symbols||[]).forEach(s => symCount[s]=(symCount[s]||0)+1));
+  const topSyms = Object.entries(symCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxSym = topSyms[0]?.[1] || 1;
+  const symColors = ['#b49fff','#e896b8','#6fe4c8','#e8c97e','#8b87c0','#5ca0e8'];
+  const symTable = document.getElementById('sym-table');
+  if (topSyms.length) {
+    symTable.innerHTML = topSyms.map((([sym,cnt],i) => `
+      <tr>
+        <td style="color:var(--text);"><span class="sym-bar-mini" style="width:${Math.round((cnt/maxSym)*60)}px;background:${symColors[i]};height:3px;display:inline-block;border-radius:2px;vertical-align:middle;margin-right:8px;"></span>${sym}</td>
+        <td style="color:var(--muted);font-family:'Space Mono',monospace;font-size:11px;">${cnt}×</td>
+      </tr>`)).join('');
+  }
+
+  // Mood timeline (last 7 dreams)
+  const last7 = dreams.slice(0, 7).reverse();
+  const timeline = document.getElementById('mood-timeline');
+  if (last7.length) {
+    const labels = last7.map(d => {
+      const dt = new Date(d.date);
+      return dt.toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
+    });
+    // Use avg emotion positivity as bar height proxy (simple: vividness)
+    timeline.innerHTML = last7.map((d,i) => {
+      const h = Math.round((d.vividness/10)*70);
+      const hue = d.vividness > 6 ? '#b49fff' : d.vividness > 4 ? '#6fe4c8' : '#e896b8';
+      return `<div class="mood-bar-col">
+        <div class="mood-bar-fill" style="height:${h}px;background:${hue};width:100%;border-radius:4px 4px 0 0;"></div>
+        <div class="mood-bar-label">${labels[i]}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+async function getPatternReading() {
+  if (dreams.length < 1) {
+    showToast('Log at least one dream first ✦');
+    return;
+  }
+
+  const box = document.getElementById('pattern-insight');
+  box.innerHTML = '<div class="loading-dots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>';
+
+  const summary = dreams.slice(0,8).map(d =>
+    `"${d.title}": symbols=[${(d.symbols||[]).join(',')}], emotions=[${(d.emotions||[]).join(',')}], archetype=${d.archetype}, vividness=${d.vividness}`
+  ).join('\n');
+
+  const prompt = `You are a Jungian analyst studying someone's dream journal. Here are their recent dreams:
+
+${summary}
+
+Write a 3-4 sentence deep pattern reading. Identify: the strongest recurring symbol or theme, what psychological process their subconscious seems to be working through, and one actionable suggestion for waking life. Be poetic, warm, specific, and insightful. Reference actual symbols from their dreams.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role:'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(i=>i.text||'').join('')||'';
+    box.textContent = text;
+  } catch {
+    box.textContent = 'Could not reach the pattern oracle. Please check your connection.';
+  }
+}
+
+// ── Helpers ──
+function updateDreamCount() {
+  document.getElementById('dream-count-label').textContent =
+    `${dreams.length} dream${dreams.length!==1?'s':''} logged`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Init
+updateDreamCount();
+</script>
+</body>
+</html>
